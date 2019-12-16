@@ -1,0 +1,34 @@
+Select 
+Case Substring(SAFACCOUNTNUMBER from 6 for 3)
+  when 100 then 'Regular Passbook Savings Account'
+  When 101 then 'Penny Kiddie Savings Deposit'
+  When 102 then 'Savings Deposit - Premier'
+  When 103 then 'Mini-Savings Deposit'
+  When 200 then 'Checking Account'
+  When 300 then 'Regular Time Deposit Account'
+  When 301 then 'Special Savings Deposit Account'
+end as "ServiceType", SAFACCOUNTNUMBER, SAFDATEFORWARDED,
+SafOutStandingBalance, SAFAVAILABLEBALANCE,SafAccountType, 
+SafAccountStatus, SafFreezeFlag, SafDateCreated,
+SafCreatedBy, SafreCordCount
+From DMMSAFORWARDEDBALANCE
+Rows 500
+
+
+
+Select 'ServiceType' as ServiceType, CafAccountNumber, CafDateForwarded,
+CafOutStandingBalance, CafAvailableBalance, CafWithDrawableBalance,
+CafAccountType, CafAccountStatus, CafFreezeFlag, CafDateCreated,
+CafCreatedBy, CafrecordCount 
+From DMMCaForwardedBalance
+Rows 50
+
+
+
+Select 'ServiceType' as ServiceType, TDFACCOUNTNUMBER,
+  TDFREGISTERNUMBER, TDFDATEFORWARDED, TDFOUTSTANDINGBALANCE,
+  TDFAVAILABLEBALANCE, TDFWITHDRAWABLEBALANCE, TDFACCOUNTTYPE,
+  TDFACCOUNTSTATUS, TDFFREEZEFLAG, TDFDATECREATED, 
+  TDFCREATEDBY, TDFRECORDCOUNT
+  From DMMTDFORWARDEDBALANCE 
+  Rows 50

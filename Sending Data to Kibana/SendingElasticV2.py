@@ -46,8 +46,14 @@ def main():
 	cur = con.cursor()
 	# Execute the SELECT statement:
 	
-	
-	cur.execute("Select ALRLOANACCOUNTNO, ALRDATEENTERED, (ALRDEBITAMOUNT + ALRCREDITAMOUNT) as TotalAmt From LMMAIRLEDGER Where ALRDATEENTERED Between '1/1/2019' And '12/31/2019'")
+	#Demand Sql
+	strSqlDemand = '''Select 'ServiceType' as ServiceType, CafAccountNumber, CafDateForwarded,
+					CafOutStandingBalance, CafAvailableBalance, CafWithDrawableBalance,
+					CafAccountType, CafAccountStatus, CafFreezeFlag, CafDateCreated,
+					CafCreatedBy, CafrecordCount 
+					From DMMCaForwardedBalance'''
+					
+	cur.execute(strSqlDemand)
 	
 	# Retrieve all rows as a sequence and print that sequence:
 	for row in cur:
@@ -63,6 +69,8 @@ def main():
 		#time.sleep(3)
 		res = es.index(index="test-01", doc_type='cbs', body=doc)
 		print(res['result'])
+		
+	cur.execu("")
 
 	print("Please see output")
 	
