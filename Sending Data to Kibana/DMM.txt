@@ -177,6 +177,9 @@ When 00032 Then 'Surallah' End,
 
 
 
+==============================================================================================================
+
+
 Select * From (
 Select 
 Case Substring(SAFACCOUNTNUMBER from 3 for 3)
@@ -303,3 +306,11 @@ end as "Branch",
 TDFOUTSTANDINGBALANCE as OutStandingBalance
 From DMMTDFORWARDEDBALANCE
 )
+Where DateForwarded = '12/01/19'
+
+
+Branch
+ServiceType
+AccountNumber
+DateForwarded
+OutStandingBalance
