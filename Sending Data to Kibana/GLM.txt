@@ -48,3 +48,10 @@ CA.COADescription
 From GLMCOADAILYBALANCE DBA
 Inner Join GLMCHARTOFACCOUNT CA On CA.COAACCOUNTCODE = DBA.CADCHARTOFACCOUNT
 Rows 500
+
+
+1/1/2019
+Buhangin
+Salary Loan - Penbank
+SAL-PENBANK
+Salary Loan - Penbank Employees
