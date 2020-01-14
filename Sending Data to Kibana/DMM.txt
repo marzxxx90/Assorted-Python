@@ -44,8 +44,7 @@ Case Substring(SAFACCOUNTNUMBER from 6 for 3)
 end as "ServiceType", SAFACCOUNTNUMBER as AccountNumber, SAFDATEFORWARDED as DateForwarded,
 SafOutStandingBalance as OutStandingBalance
 From DMMSAFORWARDEDBALANCE
-Order By SAFACCOUNTNUMBER Desc 
-Rows 100
+Where SAFDATEFORWARDED Between '12/01/19' And '12/03/19'
 
 
 
