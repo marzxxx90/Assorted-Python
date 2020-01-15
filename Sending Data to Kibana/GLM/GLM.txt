@@ -6,7 +6,6 @@ Select * From GLMDMRASSIGNEDGLACCT
 
 
 Select DBA.CADPostingDate, 
-DBA.CADBranchCode, 
 Case DBA.CADBookCode
 When 00001 Then 'Tupi'
 When 00002 Then 'Polomolok'
@@ -39,15 +38,11 @@ When 00028 Then 'Ozamiz'
 When 00029 Then 'Ipil'
 When 00030 Then 'Cebu'
 When 00031 Then 'RD Plaza'
-When 00032 Then 'Surallah' End,
+When 00032 Then 'Surallah' End as Branch,
 DBA.CADUserGroupCode, DBA.CADChartOfAccount, DBA.CADDebitAmount,
-DBA.CADCreditAmount, DBA.CADBeginningBalance, DBA.CADEndingBalance,
-CA.COAACCOUNTDESCRIPTION, CA.COANormalBalance, CA.COAACCOUNTTYPE,
-CA.COAPRINTINGSYMBOL, CA.COABookCode, CA.COAPArentAccount, 
-CA.COADescription
+DBA.CADCreditAmount, DBA.CADBeginningBalance, DBA.CADEndingBalance, CA.COAACCOUNTDESCRIPTION
 From GLMCOADAILYBALANCE DBA
-Inner Join GLMCHARTOFACCOUNT CA On CA.COAACCOUNTCODE = DBA.CADCHARTOFACCOUNT
-Rows 500
+Inner Join GLMChartOfAccount CA On DBA.CADChartOfAccount = CA.COAACCOUNTCODE
 
 
 1/1/2019

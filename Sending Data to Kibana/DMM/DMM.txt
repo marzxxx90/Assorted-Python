@@ -32,7 +32,7 @@ When 00029 Then 'Ipil'
 When 00030 Then 'Cebu'
 When 00031 Then 'RD Plaza'
 When 00032 Then 'Surallah'
-end as "Branch",
+end as Branch,
 Case Substring(SAFACCOUNTNUMBER from 6 for 3)
   when 100 then 'Regular Passbook Savings Account'
   When 101 then 'Penny Kiddie Savings Deposit'
@@ -41,7 +41,7 @@ Case Substring(SAFACCOUNTNUMBER from 6 for 3)
   When 200 then 'Checking Account'
   When 300 then 'Regular Time Deposit Account'
   When 301 then 'Special Savings Deposit Account'
-end as "ServiceType", SAFACCOUNTNUMBER as AccountNumber, SAFDATEFORWARDED as DateForwarded,
+end as ServiceType, SAFACCOUNTNUMBER as AccountNumber, SAFDATEFORWARDED as DateForwarded,
 SafOutStandingBalance as OutStandingBalance
 From DMMSAFORWARDEDBALANCE
 Where SAFDATEFORWARDED Between '12/01/19' And '12/03/19'
@@ -91,6 +91,7 @@ Rows 20
 
 
 
+
 Select 
 Case Substring(TDFACCOUNTNUMBER from 3 for 3)
 When 00001 Then 'Tupi'
@@ -125,12 +126,15 @@ When 00029 Then 'Ipil'
 When 00030 Then 'Cebu'
 When 00031 Then 'RD Plaza'
 When 00032 Then 'Surallah'
-end as "Branch",
-'TimeDeposit' as ServiceType, TDFACCOUNTNUMBER as AccountNumber, TDFDATEFORWARDED as DateForwarded, 
-TDFOUTSTANDINGBALANCE as OutStandingBalance
-From DMMTDFORWARDEDBALANCE 
-Order By TDFACCOUNTNUMBER Desc
-Rows 10
+end as Branch,
+Case Substring(TDFACCOUNTNUMBER from 6 for 3)
+When 300 then 'TimeDeposit'
+When 301 then 'Special Savings Deposit Account' 
+else ' '
+End as ServiceType, TDFACCOUNTNUMBER as AccountNumber, 
+TDFDATEFORWARDED as DateForwarded,TDFOUTSTANDINGBALANCE as OutStandingBalance
+From DMMTDFORWARDEDBALANCE
+Where TDFDATEFORWARDED = '12/06/19'
 
 
 
