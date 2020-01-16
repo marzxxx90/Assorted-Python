@@ -26,10 +26,10 @@ def GetSuccessRow():
     tmp = f.read()
     return int(tmp)
     
-def GetCountRecord(tmpDate, tbl, tblDate):
+def GetCountRecord(tmpDate1, tmpDate2, tbl, tblDate):
     cur = con.cursor()    
     
-    cur.execute("Select Count(*) From " + tbl + " Where " + tblDate + " = '"+ tmpDate +"'" )
+    cur.execute("Select Count(*) From " + tbl + " Where " + tblDate + " Between '"+ tmpDate1 +"' And '"+ tmpDate2 +"'" )
     for row in cur:
         tmpCount = row[0]
     return int(tmpCount)    
@@ -39,7 +39,7 @@ def main():
     cur = con.cursor()
     # Execute the SELECT statement:
     scRow = GetSuccessRow()
-    cnt = GetCountRecord('12/01/19', 'GLMCOADAILYBALANCE', 'CADPostingDate')
+    cnt = GetCountRecord('12/01/19', '12/31/19','GLMCOADAILYBALANCE', 'CADPostingDate')
     
     IntStartRows = 1
     IntEndRows = cnt

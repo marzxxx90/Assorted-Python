@@ -26,10 +26,10 @@ def GetSuccessRow():
     tmp = f.read()
     return int(tmp)
     
-def GetCountRecord(tmpDate, tbl, tblDate):
+def GetCountRecord(tmpDate1, tmpDate2, tbl, tblDate):
     cur = con.cursor()    
     
-    cur.execute("Select Count(*) From " + tbl + " Where " + tblDate + " = '"+ tmpDate +"'" )
+    cur.execute("Select Count(*) From " + tbl + " Where " + tblDate + " Between '"+ tmpDate1 +"' And '"+ tmpDate2 +"'" )
     for row in cur:
         tmpCount = row[0]
     return int(tmpCount)
@@ -39,7 +39,7 @@ def main():
     cur = con.cursor()
     # Execute the SELECT statement:
     scRow = GetSuccessRow()
-    cnt = GetCountRecord('12/01/19', 'LMMFORWARDINGBALANCE', 'LFBDateForwarded')
+    cnt = GetCountRecord('12/01/19', '12/31/19','LMMFORWARDINGBALANCE', 'LFBDateForwarded')
     
     IntStartRows = 1
     IntEndRows = cnt
@@ -120,10 +120,11 @@ def main():
     strSql +="When 10 then 'Cancelled (for cancelled newly released loan)' "
     strSql +="When 11 then 'Forfeited Loan Account' "
     strSql +="end as LoanStatus, "
-    strSql +="LFBDateForwarded as DateForwarded, LFBPRINCIPALBALANCE as PrincipalBal , "
-    strSql +="LFBLoanAmount as LoanAmount " 
+    strSql +="LFBDateForwarded as DateForwarded, Sum(LFBPRINCIPALBALANCE) as PrincipalBal , "
+    strSql +="Sum(LFBLoanAmount) as LoanAmount " 
     strSql +="From LMMFORWARDINGBALANCE "
-    strSql +="Where LFBDateForwarded = '"+ "12/06/19" +"' "
+    strSql +="Where LFBDateForwarded Between '12/01/19' And '12/31/19' "
+    strSql +="Group By Substring(LFBLoanAccountNo from 3 for 3), Substring(LFBLOANACCOUNTNO from 6 for 3) , LFBLOANSTATUS, LFBDateForwarded "
     strSql +="Rows " + str(IntStartRows) + " to " + str(IntEndRows)
 
     cur.execute(strSql)
@@ -134,9 +135,11 @@ def main():
         doc = {
             'Branch': row[0],
             'ServiceType': row[1],
-            'AccountNumber': row[2],
+            'LoanStatus' : row[2],
             'DateForwarded': row[3],
-            'OutStandingBalance': row[4],
+            'PrincipalBal': row[4],
+            'LoanAmount': row[5],
+            'PostingDate': row[3],
             'DocType': "LMM"}
             
         RowCount += 1
@@ -146,6 +149,7 @@ def main():
         SaveSuccessRow(str(RowCount))
     
     SaveSuccessRow(str(0))
+    print("Last Rows Count: " + str(RowCount))
     print("Please see output")
 	
 main()

@@ -15,85 +15,105 @@ DIRPATH = os.getcwd()
 
 # con = fdb.connect(dsn='D:\Installer\Database\DMMHost.fdb',user=FBTEST_USER, password=FBTEST_PASSWORD)
 con = fdb.connect(dsn='D:\Installer\Database\DMMHost.fdb',user ='sysdba', password='masterkey')
-
-def SetKeysValue(strSection, strKeys, strValue):
-    config.set(strSection, strKeys, strValue)
-
-def ReturnValueConfig(strSection, strKeys):
-    return config.get(strSection, strKeys) 
-    
+  
 def SaveSuccessRow(strValue):
-    f = open("DTDMMSuccessRow.txt","w+")
+    f = open("DMMTDSuccessRow.txt","w+")
     f.write(str(strValue) + "\r\n")  
+    
+def GetSuccessRow():
+    f = open("DMMTDSuccessRow.txt","r+")
+    
+    tmp = f.read()
+    return int(tmp)
+    
+def GetCountRecord(tmpDate1, tmpDate2, tbl, tblDate):
+    cur = con.cursor()    
+    
+    cur.execute("Select Count(*) From " + tbl + " Where " + tblDate + " Between '"+ tmpDate1 +"' And '"+ tmpDate2 +"'" )
+    for row in cur:
+        tmpCount = row[0]
+    return int(tmpCount)  
     
 def main():
     # Create a Cursor object that operates in the context of Connection con:
     cur = con.cursor()
     # Execute the SELECT statement:
+    scRow = GetSuccessRow()
+    cnt = GetCountRecord('12/01/19', '12/31/19', 'DMMTDFORWARDEDBALANCE', 'TDFDATEFORWARDED')
+    
     IntStartRows = 1
-    IntEndRows = 500
+    IntEndRows = cnt
+    
+    if scRow != 0:
+        IntStartRows = scRow
+        IntEndRows = cnt 
 
-    strSql = "Select " 
-    strSql += "Case Substring(TDFACCOUNTNUMBER from 3 for 3) "
-    strSql += "When 00001 Then 'Tupi' "
-    strSql += "When 00002 Then 'Polomolok' "
-    strSql += "When 00003 Then 'Tantangan' "
-    strSql += "When 00004 Then 'Santiago' "
-    strSql += "When 00005 Then 'Koronadal' "
-    strSql += "When 00006 Then 'Tacurong' "
-    strSql += "When 00007 Then 'Calumpang' "
-    strSql += "When 00008 Then 'Isulan' "
-    strSql += "When 00009 Then 'Panabo' "
-    strSql += "When 00010 Then 'Tagum' "
-    strSql += "When 00011 Then 'Digos' "
-    strSql += "When 00012 Then 'AsFortuna' "
-    strSql += "When 00013 Then 'Talisay' "
-    strSql += "When 00014 Then 'Kidapawan' "
-    strSql += "When 00015 Then 'Fishport' "
-    strSql += "When 00016 Then 'Robinsons' "
-    strSql += "When 00017 Then 'Valencia' "
-    strSql += "When 00018 Then 'Cogon' "
-    strSql += "When 00019 Then 'Lapu-lapu' "
-    strSql += "When 00020 Then 'SB Cabahub' "
-    strSql += "When 00021 Then 'Puerto' "
-    strSql += "When 00022 Then 'Magallanes' "
-    strSql += "When 00023 Then 'Jaro' "
-    strSql += "When 00024 Then 'Zamboanga' "
-    strSql += "When 00025 Then 'Pagadian' "
-    strSql += "When 00026 Then 'Buhangin' "
-    strSql += "When 00027 Then 'Punta' "
-    strSql += "When 00028 Then 'Ozamiz' "
-    strSql += "When 00029 Then 'Ipil' "
-    strSql += "When 00030 Then 'Cebu' "
-    strSql += "When 00031 Then 'RD Plaza' "
-    strSql += "When 00032 Then 'Surallah' "
-    strSql += "end as Branch, "
-    strSql += "Case Substring(TDFACCOUNTNUMBER from 6 for 3) "
-    strSql += "When 300 then 'TimeDeposit' "
-    strSql += "When 301 then 'Special Savings Deposit Account' "
-    strSql += "else ' ' "
-    strSql += "End as ServiceType, TDFACCOUNTNUMBER as AccountNumber, "
-    strSql += "TDFDATEFORWARDED as DateForwarded,TDFOUTSTANDINGBALANCE as OutStandingBalance "
-    strSql += "From DMMTDFORWARDEDBALANCE "
-    strSql += "Where TDFDATEFORWARDED = '" + "12/06/19" + "'"
+    strSql = "Select "
+    strSql +="Case Substring(TDFACCOUNTNUMBER from 3 for 3) "
+    strSql +="When 00001 Then 'Tupi' "
+    strSql +="When 00002 Then 'Polomolok' "
+    strSql +="When 00003 Then 'Tantangan' "
+    strSql +="When 00004 Then 'Santiago' "
+    strSql +="When 00005 Then 'Koronadal' "
+    strSql +="When 00006 Then 'Tacurong' "
+    strSql +="When 00007 Then 'Calumpang' "
+    strSql +="When 00008 Then 'Isulan' "
+    strSql +="When 00009 Then 'Panabo' "
+    strSql +="When 00010 Then 'Tagum' "
+    strSql +="When 00011 Then 'Digos' "
+    strSql +="When 00012 Then 'AsFortuna' "
+    strSql +="When 00013 Then 'Talisay' "
+    strSql +="When 00014 Then 'Kidapawan' "
+    strSql +="When 00015 Then 'Fishport' "
+    strSql +="When 00016 Then 'Robinsons' "
+    strSql +="When 00017 Then 'Valencia' "
+    strSql +="When 00018 Then 'Cogon' "
+    strSql +="When 00019 Then 'Lapu-lapu' "
+    strSql +="When 00020 Then 'SB Cabahub' "
+    strSql +="When 00021 Then 'Puerto' "
+    strSql +="When 00022 Then 'Magallanes' "
+    strSql +="When 00023 Then 'Jaro' "
+    strSql +="When 00024 Then 'Zamboanga' "
+    strSql +="When 00025 Then 'Pagadian' "
+    strSql +="When 00026 Then 'Buhangin' "
+    strSql +="When 00027 Then 'Punta' "
+    strSql +="When 00028 Then 'Ozamiz' "
+    strSql +="When 00029 Then 'Ipil' "
+    strSql +="When 00030 Then 'Cebu' "
+    strSql +="When 00031 Then 'RD Plaza' "
+    strSql +="When 00032 Then 'Surallah' "
+    strSql +="end as Branch, "
+    strSql +="Case Substring(TDFACCOUNTNUMBER from 6 for 3) "
+    strSql +="When 300 then 'TimeDeposit' "
+    strSql +="When 301 then 'Special Savings Deposit Account' "
+    strSql +="else ' ' "
+    strSql +="End as ServiceType, TDFDATEFORWARDED as DateForwarded, "
+    strSql +="Sum(TDFOUTSTANDINGBALANCE) as OutStandingBalance "
+    strSql +="From DMMTDFORWARDEDBALANCE "
+    strSql +="Where TDFDATEFORWARDED Between '12/01/19' And '12/31/19' "
+    strSql +="Group by Substring(TDFACCOUNTNUMBER from 3 for 3), Substring(TDFACCOUNTNUMBER from 6 for 3), TDFDATEFORWARDED "
+    strSql +="Rows " + str(IntStartRows) + " to " + str(IntEndRows)
 
     cur.execute(strSql)
 	# Retrieve all rows as a sequence and print that sequence:
-    RowCount = 0
+    RowCount = IntStartRows - 1
     for row in cur:
         doc = {
             'Branch': row[0],
             'ServiceType': row[1],
-            'AccountNumber': row[2],
-            'DateForwarded': row[3],
-            'OutStandingBalance': row[4]}
+            'DateForwarded': row[2],
+            'OutStandingBalance': row[3],
+            'PostingDate': row[2],
+            'DocType': "DMM"}
             
         RowCount += 1
-        time.sleep(1)
-        res = es.index(index="DMM-" + datetime.today().strftime('%Y%m%d'), doc_type='cbs', body=doc)
+        # time.sleep(1)
+        res = es.index(index="frontier-" + datetime.today().strftime('%Y%m%d'), doc_type='cbs', body=doc)
         print(res['result'])
-        SaveSuccessRow('Success Row: ' + str(RowCount))
+        SaveSuccessRow(str(RowCount))
 
+    SaveSuccessRow(str(0))
+    print("Last Rows Count: " + str(RowCount))
     print("Please see output")
 	
 main()

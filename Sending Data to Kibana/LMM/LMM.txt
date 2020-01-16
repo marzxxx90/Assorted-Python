@@ -174,7 +174,7 @@ When 403 then 'Quick Loans Jewelry'
 When 404 then 'Salary Loans'
 When 405 then 'Auto Loans'
 When 406 then 'Pencycle'
-end as Loan Product Code,
+end as Loan_Product_Code,
 case LFBLOANSTATUS
 When 01 then 'Current Loan'
 When 02 then 'Past Due Loan'
@@ -186,10 +186,11 @@ When 09 then 'Closed Account'
 When 10 then 'Cancelled (for cancelled newly released loan)'
 When 11 then 'Forfeited Loan Account'
 end as LoanStatus,
-LFBDateForwarded as DateForwarded, Sum(LFBPRINCIPALBALANCE) ,
-LFBLoanAmount as LoanAmount 
+LFBDateForwarded as DateForwarded, Sum(LFBPRINCIPALBALANCE) as PrincipalBalance ,
+SUM(LFBLoanAmount) as LoanAmount 
 From LMMFORWARDINGBALANCE FB
 Where LFBDateForwarded = '12/06/19'
+Group By Substring(LFBLoanAccountNo from 3 for 3),Substring(LFBLOANACCOUNTNO from 6 for 3) , LFBLOANSTATUS, LFBDateForwarded
 
 
 

@@ -26,20 +26,20 @@ def GetSuccessRow():
     tmp = f.read()
     return int(tmp)
     
-def GetCountRecord(tmpDate, tbl, tblDate):
+def GetCountRecord(tmpDate1, tmpDate2, tbl, tblDate):
     cur = con.cursor()    
     
-    cur.execute("Select Count(*) From " + tbl + " Where " + tblDate + " = '"+ tmpDate +"'" )
+    cur.execute("Select Count(*) From " + tbl + " Where " + tblDate + " Between '"+ tmpDate1 +"' And '"+ tmpDate2 +"'" )
     for row in cur:
         tmpCount = row[0]
-    return int(tmpCount)  
+    return int(tmpCount)    
     
 def main():
     # Create a Cursor object that operates in the context of Connection con:
     cur = con.cursor()
     # Execute the SELECT statement:
     scRow = GetSuccessRow()
-    cnt = GetCountRecord('12/01/19', 'DMMSAFORWARDEDBALANCE', 'SAFDATEFORWARDED')
+    cnt = GetCountRecord('12/01/19', '12/31/19', 'DMMSAFORWARDEDBALANCE', 'SAFDATEFORWARDED')
     
     IntStartRows = 1
     IntEndRows = cnt
@@ -91,10 +91,11 @@ def main():
     strSql +="When 200 then 'Checking Account' "
     strSql +="When 300 then 'Regular Time Deposit Account' "
     strSql +="When 301 then 'Special Savings Deposit Account' "
-    strSql +="end as ServiceType, SAFACCOUNTNUMBER as AccountNumber, SAFDATEFORWARDED as DateForwarded, "
-    strSql +="SafOutStandingBalance as OutStandingBalance "
+    strSql +="end as ServiceType, SAFDATEFORWARDED as DateForwarded, "
+    strSql +="SUM(SafOutStandingBalance) as OutStandingBalance "
     strSql +="From DMMSAFORWARDEDBALANCE "
-    strSql +="Where SAFDATEFORWARDED = '"+ "12/06/19" +"' "
+    strSql +="Where SAFDATEFORWARDED Between '12/01/19' And '12/31/19'" 
+    strSql +="Group by Substring(SAFACCOUNTNUMBER from 3 for 3), Substring(SAFACCOUNTNUMBER from 6 for 3),SAFDATEFORWARDED "
     strSql +="Rows " + str(IntStartRows) + " to " + str(IntEndRows)
 
     cur.execute(strSql)
@@ -104,9 +105,9 @@ def main():
         doc = {
             'Branch': row[0],
             'ServiceType': row[1],
-            'AccountNumber': row[2],
-            'DateForwarded': row[3],
-            'OutStandingBalance': row[4],
+            'DateForwarded': row[2],
+            'OutStandingBalance': row[3],
+            'PostingDate': row[2],
             'DocType': "DMM"}
             
         RowCount += 1
@@ -116,6 +117,7 @@ def main():
         SaveSuccessRow(str(RowCount))
 
     SaveSuccessRow(str(0))
+    print("Last Rows Count: " + str(RowCount))
     print("Please see output")
 	
 main()

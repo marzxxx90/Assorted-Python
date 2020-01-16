@@ -86,8 +86,7 @@ end as "Branch",
 'Demand' as ServiceType, CafAccountNumber as AccountNumber, CafDateForwarded as DateForwarded,
 CafOutStandingBalance as OutStandingBalance
 From DMMCaForwardedBalance
-Order By CafAccountNumber Desc
-Rows 20
+
 
 
 
