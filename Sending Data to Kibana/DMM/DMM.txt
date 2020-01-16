@@ -44,7 +44,7 @@ Case Substring(SAFACCOUNTNUMBER from 6 for 3)
 end as ServiceType, SAFACCOUNTNUMBER as AccountNumber, SAFDATEFORWARDED as DateForwarded,
 SafOutStandingBalance as OutStandingBalance
 From DMMSAFORWARDEDBALANCE
-Where SAFDATEFORWARDED Between '12/01/19' And '12/03/19'
+Where SAFDATEFORWARDED ='12/06/19'
 
 
 
@@ -265,7 +265,7 @@ When 00029 Then 'Ipil'
 When 00030 Then 'Cebu'
 When 00031 Then 'RD Plaza'
 When 00032 Then 'Surallah'
-end as "Branch",
+end as Branch,
 'Demand' as ServiceType, CafAccountNumber as AccountNumber, CafDateForwarded as DateForwarded,
 CafOutStandingBalance as OutStandingBalance
 From DMMCaForwardedBalance
@@ -304,7 +304,7 @@ When 00029 Then 'Ipil'
 When 00030 Then 'Cebu'
 When 00031 Then 'RD Plaza'
 When 00032 Then 'Surallah'
-end as "Branch",
+end as Branch,
 'TimeDeposit' as ServiceType, TDFACCOUNTNUMBER as AccountNumber, TDFDATEFORWARDED as DateForwarded, 
 TDFOUTSTANDINGBALANCE as OutStandingBalance
 From DMMTDFORWARDEDBALANCE

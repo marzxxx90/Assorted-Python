@@ -77,7 +77,7 @@ When 00029 Then 'Ipil'
 When 00030 Then 'Cebu'
 When 00031 Then 'RD Plaza'
 When 00032 Then 'Surallah'
-end as "Branch",
+end as Branch,
 Case Substring(LFBLOANACCOUNTNO from 6 for 3)
 When 101 then 'Commercial Loans P10 Million And Above'
 When 102 then 'Industrial Loans P10 Million And Above'
@@ -103,16 +103,17 @@ When 403 then 'Quick Loans Jewelry'
 When 404 then 'Salary Loans'
 When 405 then 'Auto Loans'
 When 406 then 'Pencycle'
-end as "Loan Product Code",
+end as Loan_Product_Code,
 FB.LFBDateForwarded as DateForwarded, LA.LLAOutstandingBalance as OutstandingBalance, 
 FB.LFBLoanAmount as LoanAmount 
 From LMMFORWARDINGBALANCE FB
 Inner Join LMMLOANACCOUNT LA On FB.LFBLOANACCOUNTNO = LA.LLALOANACCOUNTNO
-Where FB.LFBDateForwarded = '12/01/18'
+Where FB.LFBDateForwarded = '12/01/19'
 
 
 
 ====================================================================================================================
+
 Select 
 Case Substring(LFBLoanAccountNo from 3 for 3)
 When 00001 Then 'Tupi'
@@ -147,7 +148,7 @@ When 00029 Then 'Ipil'
 When 00030 Then 'Cebu'
 When 00031 Then 'RD Plaza'
 When 00032 Then 'Surallah'
-end as "Branch",
+end as Branch,
 Case Substring(LFBLOANACCOUNTNO from 6 for 3)
 When 101 then 'Commercial Loans P10 Million And Above'
 When 102 then 'Industrial Loans P10 Million And Above'
@@ -173,7 +174,7 @@ When 403 then 'Quick Loans Jewelry'
 When 404 then 'Salary Loans'
 When 405 then 'Auto Loans'
 When 406 then 'Pencycle'
-end as "Loan Product Code",
+end as Loan Product Code,
 case LFBLOANSTATUS
 When 01 then 'Current Loan'
 When 02 then 'Past Due Loan'
@@ -184,13 +185,11 @@ When 08 then 'Write Off'
 When 09 then 'Closed Account'
 When 10 then 'Cancelled (for cancelled newly released loan)'
 When 11 then 'Forfeited Loan Account'
-end as "LoanStatus",
+end as LoanStatus,
 LFBDateForwarded as DateForwarded, Sum(LFBPRINCIPALBALANCE) ,
-Sum(LFBLoanAmount) as LoanAmount 
+LFBLoanAmount as LoanAmount 
 From LMMFORWARDINGBALANCE FB
 Where LFBDateForwarded = '12/06/19'
-Group By Substring(LFBLoanAccountNo from 3 for 3), Substring(LFBLOANACCOUNTNO from 6 for 3),
-LFBLOANSTATUS, LFBDateForwarded
 
 
 

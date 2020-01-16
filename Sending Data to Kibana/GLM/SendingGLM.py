@@ -14,24 +14,39 @@ FBTEST_PASSWORD = 'masterkey'
 DIRPATH = os.getcwd()
 
 # con = fdb.connect(dsn='D:\Installer\Database\DMMHost.fdb',user=FBTEST_USER, password=FBTEST_PASSWORD)
-con = fdb.connect(dsn='D:\Installer\Database\DMMHost.fdb',user ='sysdba', password='masterkey')
-
-def SetKeysValue(strSection, strKeys, strValue):
-    config.set(strSection, strKeys, strValue)
-
-def ReturnValueConfig(strSection, strKeys):
-    return config.get(strSection, strKeys) 
-    
+con = fdb.connect(dsn='D:\Installer\Database\GLMHost.fdb',user ='sysdba', password='masterkey')
+ 
 def SaveSuccessRow(strValue):
     f = open("GLMSuccessRow.txt","w+")
     f.write(str(strValue) + "\r\n")  
+    
+def GetSuccessRow():
+    f = open("GLMSuccessRow.txt","r+")
+    
+    tmp = f.read()
+    return int(tmp)
+    
+def GetCountRecord(tmpDate, tbl, tblDate):
+    cur = con.cursor()    
+    
+    cur.execute("Select Count(*) From " + tbl + " Where " + tblDate + " = '"+ tmpDate +"'" )
+    for row in cur:
+        tmpCount = row[0]
+    return int(tmpCount)    
     
 def main():
     # Create a Cursor object that operates in the context of Connection con:
     cur = con.cursor()
     # Execute the SELECT statement:
+    scRow = GetSuccessRow()
+    cnt = GetCountRecord('12/01/19', 'GLMCOADAILYBALANCE', 'CADPostingDate')
+    
     IntStartRows = 1
-    IntEndRows = 500
+    IntEndRows = cnt
+    
+    if scRow != 0:
+        IntStartRows = scRow
+        IntEndRows = cnt       
 
     strSql = "Select DBA.CADPostingDate, " 
     strSql +="Case DBA.CADBookCode "
@@ -71,10 +86,11 @@ def main():
     strSql +="DBA.CADCreditAmount, DBA.CADBeginningBalance, DBA.CADEndingBalance, CA.COAACCOUNTDESCRIPTION "
     strSql +="From GLMCOADAILYBALANCE DBA "
     strSql +="Inner Join GLMChartOfAccount CA On DBA.CADChartOfAccount = CA.COAACCOUNTCODE "
-    strSql +="Where DBA.CADPostingDate = '"+ "12/01/19" +"'"
-    
+    strSql +="Where DBA.CADPostingDate = '"+ "12/06/19" +"' "
+    strSql +="Rows " + str(IntStartRows) + " to " + str(IntEndRows)
+ 
     cur.execute(strSql)
-	# Retrieve all rows as a sequence and print that sequence:
+    # Retrieve all rows as a sequence and print that sequence:
     RowCount = 0
     for row in cur:
         doc = {
@@ -83,14 +99,16 @@ def main():
             'ChartOfAccount': row[2],
             'BeginningBalance': row[3],
             'EndingBalance': row[4],
-            'AcountDescription': row[5]}
+            'AcountDescription': row[5],
+            'DocType': "GLM"}
             
         RowCount += 1
-        time.sleep(1)
-        res = es.index(index="GLM-" + datetime.today().strftime('%Y%m%d'), doc_type='cbs', body=doc)
+        # time.sleep(1)
+        res = es.index(index="frontier-" + datetime.today().strftime('%Y%m%d'), doc_type='cbs', body=doc)
         print(res['result'])
-        SaveSuccessRow('Success Row: ' + str(RowCount))
-
+        SaveSuccessRow(str(RowCount))
+        
+    SaveSuccessRow(str(0))
     print("Please see output")
 	
 main()

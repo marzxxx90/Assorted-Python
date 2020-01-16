@@ -4,15 +4,15 @@ import requests
 import time
 import configparser
 
+config = configparser.ConfigParser()
 def UpdateKeysValue(strPath, strSection, strKeys, strValue):
-    config = configparser.ConfigParser()
     config.read(strPath)
     sections = config.sections()
+    sections.append(strSection)
     
     config.set(strSection, strKeys, strValue)
 
 def ReturnValueConfig(strPath, strSection, strKeys):
-    config = configparser.ConfigParser()
     config.read(strPath)
     tmpVal = config.get(strSection, strKeys)
     return tmpVal

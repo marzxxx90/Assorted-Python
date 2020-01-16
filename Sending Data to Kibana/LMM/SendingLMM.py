@@ -16,23 +16,38 @@ DIRPATH = os.getcwd()
 # con = fdb.connect(dsn='D:\Installer\Database\DMMHost.fdb',user=FBTEST_USER, password=FBTEST_PASSWORD)
 con = fdb.connect(dsn='D:\Installer\Database\LMMHost.fdb',user ='sysdba', password='masterkey')
 
-def SetKeysValue(strSection, strKeys, strValue):
-    config.set(strSection, strKeys, strValue)
-
-def ReturnValueConfig(strSection, strKeys):
-    return config.get(strSection, strKeys) 
-    
 def SaveSuccessRow(strValue):
     f = open("LMMSuccessRow.txt","w+")
     f.write(str(strValue) + "\r\n")  
     
+def GetSuccessRow():
+    f = open("LMMSuccessRow.txt","r+")
+    
+    tmp = f.read()
+    return int(tmp)
+    
+def GetCountRecord(tmpDate, tbl, tblDate):
+    cur = con.cursor()    
+    
+    cur.execute("Select Count(*) From " + tbl + " Where " + tblDate + " = '"+ tmpDate +"'" )
+    for row in cur:
+        tmpCount = row[0]
+    return int(tmpCount)
+
 def main():
     # Create a Cursor object that operates in the context of Connection con:
     cur = con.cursor()
     # Execute the SELECT statement:
+    scRow = GetSuccessRow()
+    cnt = GetCountRecord('12/01/19', 'LMMFORWARDINGBALANCE', 'LFBDateForwarded')
+    
     IntStartRows = 1
-    IntEndRows = 500
-
+    IntEndRows = cnt
+    
+    if scRow != 0:
+        IntStartRows = scRow
+        IntEndRows = cnt       
+    
     strSql = "Select "
     strSql +="Case Substring(LFBLoanAccountNo from 3 for 3) "
     strSql +="When 00001 Then 'Tupi' "
@@ -108,25 +123,29 @@ def main():
     strSql +="LFBDateForwarded as DateForwarded, LFBPRINCIPALBALANCE as PrincipalBal , "
     strSql +="LFBLoanAmount as LoanAmount " 
     strSql +="From LMMFORWARDINGBALANCE "
-    strSql +="Where LFBDateForwarded = '"+ "12/06/19" +"'"
+    strSql +="Where LFBDateForwarded = '"+ "12/06/19" +"' "
+    strSql +="Rows " + str(IntStartRows) + " to " + str(IntEndRows)
 
     cur.execute(strSql)
 	# Retrieve all rows as a sequence and print that sequence:
-    RowCount = 0
+    
+    RowCount = IntStartRows -1
     for row in cur:
         doc = {
             'Branch': row[0],
             'ServiceType': row[1],
             'AccountNumber': row[2],
             'DateForwarded': row[3],
-            'OutStandingBalance': row[4]}
+            'OutStandingBalance': row[4],
+            'DocType': "LMM"}
             
         RowCount += 1
-        time.sleep(1)
-        res = es.index(index="LMM-" + datetime.today().strftime('%Y%m%d'), doc_type='cbs', body=doc)
+        # time.sleep(1)
+        res = es.index(index="frontier-" + datetime.today().strftime('%Y%m%d'), doc_type='cbs', body=doc)
         print(res['result'])
-        SaveSuccessRow('Success Row: ' + str(RowCount))
-
+        SaveSuccessRow(str(RowCount))
+    
+    SaveSuccessRow(str(0))
     print("Please see output")
 	
 main()
