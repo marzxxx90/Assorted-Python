@@ -82,11 +82,12 @@ def main():
     strSql +="When 00030 Then 'Cebu' "
     strSql +="When 00031 Then 'RD Plaza' "
     strSql +="When 00032 Then 'Surallah' End as Branch, "
-    strSql +="DBA.CADUserGroupCode, DBA.CADChartOfAccount, DBA.CADDebitAmount, "
-    strSql +="DBA.CADCreditAmount, DBA.CADBeginningBalance, DBA.CADEndingBalance, CA.COAACCOUNTDESCRIPTION "
+    strSql +="DBA.CADChartOfAccount, Sum(DBA.CADBeginningBalance) as BeginningBalance, "
+    strSql +="Sum(DBA.CADEndingBalance) as EndingBalance, CA.COAACCOUNTDESCRIPTION "
     strSql +="From GLMCOADAILYBALANCE DBA "
     strSql +="Inner Join GLMChartOfAccount CA On DBA.CADChartOfAccount = CA.COAACCOUNTCODE "
-    strSql +="Where DBA.CADPostingDate = '"+ "12/06/19" +"' "
+    strSql +="Where DBA.CADPostingDate Between '12/01/19' And '12/31/19' "
+    strSql +="Group by DBA.CADBookCode, DBA.CADPostingDate, DBA.CADChartOfAccount, CA.COAACCOUNTDESCRIPTION "
     strSql +="Rows " + str(IntStartRows) + " to " + str(IntEndRows)
  
     cur.execute(strSql)
@@ -109,6 +110,7 @@ def main():
         SaveSuccessRow(str(RowCount))
         
     SaveSuccessRow(str(0))
+    print("Last Rows Count: " + str(RowCount))
     print("Please see output")
 	
 main()
