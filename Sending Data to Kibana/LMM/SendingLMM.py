@@ -34,6 +34,9 @@ def GetCountRecord(tmpDate1, tmpDate2, tbl, tblDate):
         tmpCount = row[0]
     return int(tmpCount)
 
+def RecordDate():
+    print(" ")
+
 def main():
     # Create a Cursor object that operates in the context of Connection con:
     cur = con.cursor()
