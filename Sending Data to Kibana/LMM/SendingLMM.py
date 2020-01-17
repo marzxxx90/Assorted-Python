@@ -37,6 +37,27 @@ def GetCountRecord(tmpDate1, tmpDate2, tbl, tblDate):
 def RecordDate():
     print(" ")
 
+def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
+    """
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = printEnd)
+    # Print New Line on Complete
+    if iteration == total: 
+        print()
+        
 def main():
     # Create a Cursor object that operates in the context of Connection con:
     cur = con.cursor()
@@ -126,7 +147,7 @@ def main():
     strSql +="LFBDateForwarded as DateForwarded, Sum(LFBPRINCIPALBALANCE) as PrincipalBal , "
     strSql +="Sum(LFBLoanAmount) as LoanAmount " 
     strSql +="From LMMFORWARDINGBALANCE "
-    strSql +="Where LFBDateForwarded Between '12/01/19' And '12/31/19' "
+    strSql +="Where LFBDateForwarded Between '11/01/19' And '11/30/19' "
     strSql +="Group By Substring(LFBLoanAccountNo from 3 for 3), Substring(LFBLOANACCOUNTNO from 6 for 3) , LFBLOANSTATUS, LFBDateForwarded "
     strSql +="Rows " + str(IntStartRows) + " to " + str(IntEndRows)
 
@@ -148,7 +169,8 @@ def main():
         RowCount += 1
         # time.sleep(1)
         res = es.index(index="frontier-" + datetime.today().strftime('%Y%m%d'), doc_type='cbs', body=doc)
-        print(res['result'])
+        #print(res['result'])
+        printProgressBar(RowCount, cnt, prefix = 'Progress:', suffix = 'Complete', length = 50)
         SaveSuccessRow(str(RowCount))
     
     SaveSuccessRow(str(0))

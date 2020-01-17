@@ -94,7 +94,7 @@ def main():
     strSql +="end as ServiceType, SAFDATEFORWARDED as DateForwarded, "
     strSql +="SUM(SafOutStandingBalance) as OutStandingBalance "
     strSql +="From DMMSAFORWARDEDBALANCE "
-    strSql +="Where SAFDATEFORWARDED Between '12/01/19' And '12/31/19'" 
+    strSql +="Where SAFDATEFORWARDED Between '12/01/19' And '12/31/19' " 
     strSql +="Group by Substring(SAFACCOUNTNUMBER from 3 for 3), Substring(SAFACCOUNTNUMBER from 6 for 3),SAFDATEFORWARDED "
     strSql +="Rows " + str(IntStartRows) + " to " + str(IntEndRows)
 
