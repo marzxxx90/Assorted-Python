@@ -6,6 +6,7 @@ import logging
 import configparser
 from datetime import datetime
 from elasticsearch import Elasticsearch
+from progress.bar import IncrementalBar
 es = Elasticsearch(['172.16.100.32'])  # IP Server --------->Source
 
 FBTEST_HOST = 'localhost'
@@ -32,8 +33,8 @@ def GetCountRecord(tmpDate1, tmpDate2, tbl, tblDate):
     cur.execute("Select Count(*) From " + tbl + " Where " + tblDate + " Between '"+ tmpDate1 +"' And '"+ tmpDate2 +"'" )
     for row in cur:
         tmpCount = row[0]
-    return int(tmpCount)    
-    
+    return int(tmpCount)
+  
 def main():
     # Create a Cursor object that operates in the context of Connection con:
     cur = con.cursor()
@@ -48,6 +49,10 @@ def main():
         IntStartRows = scRow
         IntEndRows = cnt       
 
+    prog = IntStartRows / cnt
+    
+    bar = IncrementalBar(' Progress', index = IntStartRows, max = cnt, suffix='%(percent)d%%')
+    
     strSql = "Select DBA.CADPostingDate, " 
     strSql +="Case DBA.CADBookCode "
     strSql +="When 00001 Then 'Tupi' "
@@ -86,7 +91,7 @@ def main():
     strSql +="Sum(DBA.CADEndingBalance) as EndingBalance, CA.COAACCOUNTDESCRIPTION "
     strSql +="From GLMCOADAILYBALANCE DBA "
     strSql +="Inner Join GLMChartOfAccount CA On DBA.CADChartOfAccount = CA.COAACCOUNTCODE "
-    strSql +="Where DBA.CADPostingDate Between '12/01/19' And '12/31/19' "
+    strSql +="Where DBA.CADPostingDate Between '11/01/19' And '11/30/19' "
     strSql +="Group by DBA.CADBookCode, DBA.CADPostingDate, DBA.CADChartOfAccount, CA.COAACCOUNTDESCRIPTION "
     strSql +="Rows " + str(IntStartRows) + " to " + str(IntEndRows)
  
@@ -106,10 +111,12 @@ def main():
         RowCount += 1
         # time.sleep(1)
         res = es.index(index="frontier-" + datetime.today().strftime('%Y%m%d'), doc_type='cbs', body=doc)
-        print(res['result'])
+        #print(res['result'])
+        bar.next()
         SaveSuccessRow(str(RowCount))
         
     SaveSuccessRow(str(0))
+    bar.finish()
     print("Last Rows Count: " + str(RowCount))
     print("Please see output")
 	
