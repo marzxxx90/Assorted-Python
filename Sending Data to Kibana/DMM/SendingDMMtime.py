@@ -38,15 +38,6 @@ def main():
     # Create a Cursor object that operates in the context of Connection con:
     cur = con.cursor()
     # Execute the SELECT statement:
-    scRow = GetSuccessRow()
-    cnt = GetCountRecord('12/01/19', '12/31/19', 'DMMTDFORWARDEDBALANCE', 'TDFDATEFORWARDED')
-    
-    IntStartRows = 1
-    IntEndRows = cnt
-    
-    if scRow != 0:
-        IntStartRows = scRow
-        IntEndRows = cnt 
 
     strSql = "Select "
     strSql +="Case Substring(TDFACCOUNTNUMBER from 3 for 3) "

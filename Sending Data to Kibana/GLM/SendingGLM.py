@@ -39,19 +39,6 @@ def main():
     # Create a Cursor object that operates in the context of Connection con:
     cur = con.cursor()
     # Execute the SELECT statement:
-    scRow = GetSuccessRow()
-    cnt = GetCountRecord('12/01/19', '12/31/19','GLMCOADAILYBALANCE', 'CADPostingDate')
-    
-    IntStartRows = 1
-    IntEndRows = cnt
-    
-    if scRow != 0:
-        IntStartRows = scRow
-        IntEndRows = cnt       
-
-    prog = IntStartRows / cnt
-    
-    bar = IncrementalBar(' Progress', index = IntStartRows, max = cnt, suffix='%(percent)d%%')
     
     strSql = "Select DBA.CADPostingDate, " 
     strSql +="Case DBA.CADBookCode "

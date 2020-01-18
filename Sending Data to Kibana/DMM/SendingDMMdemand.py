@@ -39,23 +39,6 @@ def main():
     # Create a Cursor object that operates in the context of Connection con:
     cur = con.cursor()
     # Execute the SELECT statement:
-    scRow = GetSuccessRow()
-    cnt = GetCountRecord('12/01/19', '12/31/19', 'DMMCaForwardedBalance', 'CafDateForwarded')
-    
-    IntStartRows = 1
-    IntEndRows = cnt
-    
-    if scRow != 0:
-        IntStartRows = scRow
-        IntEndRows = cnt 
-    
-    RowCount = IntStartRows -1
-    
-    prog = IntStartRows / cnt
-    
-    print("Rows Start: " + str(scRow))
-    print("Record Count: " + str(cnt))
-    bar = IncrementalBar(' Progress', index = RowCount, max = (cnt - RowCount))
     
     strSql = "Select "
     strSql +="Case Substring(CafAccountNumber from 3 for 3) "
