@@ -6,6 +6,7 @@ import logging
 import configparser
 from datetime import datetime
 from elasticsearch import Elasticsearch
+from progress.bar import IncrementalBar
 es = Elasticsearch(['172.16.100.32'])  # IP Server --------->Source
 
 FBTEST_HOST = 'localhost'
@@ -88,7 +89,7 @@ def main():
     strSql +="When Substring(TDFACCOUNTNUMBER from 3 for 3) In (00012, 00020, 00030, 00027, 00013, 00019, 00016, 00023) Then 'Business Center V' "
     strSql +="End as Cluster "
     strSql +="From DMMTDFORWARDEDBALANCE "
-    strSql +="Where TDFDATEFORWARDED Between '10/01/19' And '10/30/19' "
+    strSql +="Where TDFDATEFORWARDED Between '12/01/19' And '12/31/19' "
     strSql +="Group by Substring(TDFACCOUNTNUMBER from 3 for 3), Substring(TDFACCOUNTNUMBER from 6 for 3), TDFDATEFORWARDED "
     
     scRow = GetSuccessRow()
