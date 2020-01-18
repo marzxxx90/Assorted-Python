@@ -114,6 +114,7 @@ Where FB.LFBDateForwarded = '12/01/19'
 
 ====================================================================================================================
 
+
 Select 
 Case Substring(LFBLoanAccountNo from 3 for 3)
 When 00001 Then 'Tupi'
@@ -187,11 +188,17 @@ When 10 then 'Cancelled (for cancelled newly released loan)'
 When 11 then 'Forfeited Loan Account'
 end as LoanStatus,
 LFBDateForwarded as DateForwarded, Sum(LFBPRINCIPALBALANCE) as PrincipalBalance ,
-SUM(LFBLoanAmount) as LoanAmount 
-From LMMFORWARDINGBALANCE FB
-Where LFBDateForwarded = '12/06/19'
+SUM(LFBLoanAmount) as LoanAmount, 
+Case 
+When Substring(LFBLoanAccountNo from 3 for 3) In (00004, 00031, 00015, 00007, 00002) Then 'Business Center I'
+When Substring(LFBLoanAccountNo from 3 for 3) In (00001, 00005, 00003, 00008, 00032, 00006) Then 'Business Center II'
+When Substring(LFBLoanAccountNo from 3 for 3) In (00011, 00010, 00009, 00022, 00026, 00014) Then 'Business Center III'
+When Substring(LFBLoanAccountNo from 3 for 3) In (00017, 00025, 00028, 00029, 00021, 00018, 00024) Then 'Business Center IV'
+When Substring(LFBLoanAccountNo from 3 for 3) In (00012, 00020, 00030, 00027, 00013, 00019, 00016, 00023) Then 'Business Center V'
+End as Cluster
+From LMMFORWARDINGBALANCE
+Where LFBDateForwarded = '12/01/19'
 Group By Substring(LFBLoanAccountNo from 3 for 3),Substring(LFBLOANACCOUNTNO from 6 for 3) , LFBLOANSTATUS, LFBDateForwarded
-
 
 
 ===============================================================================================

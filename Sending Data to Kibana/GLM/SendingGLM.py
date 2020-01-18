@@ -27,10 +27,10 @@ def GetSuccessRow():
     tmp = f.read()
     return int(tmp)
     
-def GetCountRecord(tmpDate1, tmpDate2, tbl, tblDate):
+def GetCountRecord(strSql):
     cur = con.cursor()    
     
-    cur.execute("Select Count(*) From " + tbl + " Where " + tblDate + " Between '"+ tmpDate1 +"' And '"+ tmpDate2 +"'" )
+    cur.execute("Select Count(*) From (" + strSql + " )")
     for row in cur:
         tmpCount = row[0]
     return int(tmpCount)
@@ -93,6 +93,28 @@ def main():
     strSql +="Inner Join GLMChartOfAccount CA On DBA.CADChartOfAccount = CA.COAACCOUNTCODE "
     strSql +="Where DBA.CADPostingDate Between '11/01/19' And '11/30/19' "
     strSql +="Group by DBA.CADBookCode, DBA.CADPostingDate, DBA.CADChartOfAccount, CA.COAACCOUNTDESCRIPTION "
+    
+    scRow = GetSuccessRow()
+    cnt = GetCountRecord(strSql)
+    
+    
+    IntStartRows = 1
+    IntEndRows = cnt
+
+
+    if scRow != 0:
+        IntStartRows = scRow
+        IntEndRows = cnt       
+        
+    RowCount = IntStartRows -1
+    
+    prog = IntStartRows / cnt
+    
+    print("Rows Start: " + str(scRow))
+    print("Record Count: " + str(cnt))
+    
+    bar = IncrementalBar(' Progress', index = RowCount, max = (cnt - RowCount))
+    
     strSql +="Rows " + str(IntStartRows) + " to " + str(IntEndRows)
  
     cur.execute(strSql)

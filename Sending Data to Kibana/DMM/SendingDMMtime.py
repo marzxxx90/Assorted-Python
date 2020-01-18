@@ -26,10 +26,10 @@ def GetSuccessRow():
     tmp = f.read()
     return int(tmp)
     
-def GetCountRecord(tmpDate1, tmpDate2, tbl, tblDate):
+def GetCountRecord(strSql):
     cur = con.cursor()    
     
-    cur.execute("Select Count(*) From " + tbl + " Where " + tblDate + " Between '"+ tmpDate1 +"' And '"+ tmpDate2 +"'" )
+    cur.execute("Select Count(*) From (" + strSql + " )")
     for row in cur:
         tmpCount = row[0]
     return int(tmpCount)  
@@ -88,10 +88,39 @@ def main():
     strSql +="When 301 then 'Special Savings Deposit Account' "
     strSql +="else ' ' "
     strSql +="End as ServiceType, TDFDATEFORWARDED as DateForwarded, "
-    strSql +="Sum(TDFOUTSTANDINGBALANCE) as OutStandingBalance "
+    strSql +="Sum(TDFOUTSTANDINGBALANCE) as OutStandingBalance, "
+    strSql +="Case "
+    strSql +="When Substring(TDFACCOUNTNUMBER from 3 for 3) In (00004, 00031, 00015, 00007, 00002) Then 'Business Center I' "
+    strSql +="When Substring(TDFACCOUNTNUMBER from 3 for 3) In (00001, 00005, 00003, 00008, 00032, 00006) Then 'Business Center II' "
+    strSql +="When Substring(TDFACCOUNTNUMBER from 3 for 3) In (00011, 00010, 00009, 00022, 00026, 00014) Then 'Business Center III' "
+    strSql +="When Substring(TDFACCOUNTNUMBER from 3 for 3) In (00017, 00025, 00028, 00029, 00021, 00018, 00024) Then 'Business Center IV' "
+    strSql +="When Substring(TDFACCOUNTNUMBER from 3 for 3) In (00012, 00020, 00030, 00027, 00013, 00019, 00016, 00023) Then 'Business Center V' "
+    strSql +="End as Cluster "
     strSql +="From DMMTDFORWARDEDBALANCE "
-    strSql +="Where TDFDATEFORWARDED Between '12/01/19' And '12/31/19' "
+    strSql +="Where TDFDATEFORWARDED Between '10/01/19' And '10/30/19' "
     strSql +="Group by Substring(TDFACCOUNTNUMBER from 3 for 3), Substring(TDFACCOUNTNUMBER from 6 for 3), TDFDATEFORWARDED "
+    
+    scRow = GetSuccessRow()
+    cnt = GetCountRecord(strSql)
+    
+    
+    IntStartRows = 1
+    IntEndRows = cnt
+
+
+    if scRow != 0:
+        IntStartRows = scRow
+        IntEndRows = cnt       
+        
+    RowCount = IntStartRows -1
+    
+    prog = IntStartRows / cnt
+    
+    print("Rows Start: " + str(scRow))
+    print("Record Count: " + str(cnt))
+    
+    bar = IncrementalBar(' Progress', index = RowCount, max = (cnt - RowCount))
+    
     strSql +="Rows " + str(IntStartRows) + " to " + str(IntEndRows)
 
     cur.execute(strSql)
@@ -103,16 +132,19 @@ def main():
             'ServiceType': row[1],
             'DateForwarded': row[2],
             'OutStandingBalance': row[3],
+            'BusinessCenter': row[4],
             'PostingDate': row[2],
             'DocType': "DMM"}
             
         RowCount += 1
         # time.sleep(1)
         res = es.index(index="frontier-" + datetime.today().strftime('%Y%m%d'), doc_type='cbs', body=doc)
-        print(res['result'])
+        #print(res['result'])
+        bar.next()
         SaveSuccessRow(str(RowCount))
 
     SaveSuccessRow(str(0))
+    bar.finish()
     print("Last Rows Count: " + str(RowCount))
     print("Please see output")
 	
