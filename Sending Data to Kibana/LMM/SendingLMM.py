@@ -122,7 +122,7 @@ def main():
     strSql +="When Substring(LFBLoanAccountNo from 3 for 3) In (00012, 00020, 00030, 00027, 00013, 00019, 00016, 00023) Then 'Business Center V' "
     strSql +="End as Cluster "
     strSql +="From LMMFORWARDINGBALANCE "
-    strSql +="Where LFBDateForwarded Between '11/01/19' And '11/30/19' "
+    strSql +="Where LFBDateForwarded Between '12/01/19' And '12/10/19' "
     strSql +="Group By Substring(LFBLoanAccountNo from 3 for 3), Substring(LFBLOANACCOUNTNO from 6 for 3) , LFBLOANSTATUS, LFBDateForwarded "
     
     scRow = GetSuccessRow()
@@ -139,12 +139,11 @@ def main():
         
     RowCount = IntStartRows -1
     
-    prog = IntStartRows / cnt
     
     print("Rows Start: " + str(scRow))
     print("Record Count: " + str(cnt))
     
-    bar = IncrementalBar(' Progress', index = RowCount, max = (cnt - RowCount))
+    bar = IncrementalBar(' Progress', index = 1, max = cnt)
     
     strSql +="Rows " + str(IntStartRows) + " to " + str(IntEndRows)
 

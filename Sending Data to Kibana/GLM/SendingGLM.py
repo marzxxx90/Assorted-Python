@@ -41,7 +41,7 @@ def main():
     # Execute the SELECT statement:
     
     strSql = "Select DBA.CADPostingDate, " 
-    strSql +="Case DBA.CADBookCode "
+    strSql +="Case DBA.CADBRANCHCODE "
     strSql +="When 00001 Then 'Tupi' "
     strSql +="When 00002 Then 'Polomolok' "
     strSql +="When 00003 Then 'Tantangan' "
@@ -78,9 +78,9 @@ def main():
     strSql +="Sum(DBA.CADEndingBalance) as EndingBalance, CA.COAACCOUNTDESCRIPTION "
     strSql +="From GLMCOADAILYBALANCE DBA "
     strSql +="Inner Join GLMChartOfAccount CA On DBA.CADChartOfAccount = CA.COAACCOUNTCODE "
-    strSql +="Where DBA.CADPostingDate Between '11/01/19' And '11/30/19' "
-    strSql +="Group by DBA.CADBookCode, DBA.CADPostingDate, DBA.CADChartOfAccount, CA.COAACCOUNTDESCRIPTION "
-    
+    strSql +="Where DBA.CADPostingDate Between '12/01/19' And '12/06/19' "
+    strSql +="Group by DBA.CADBRANCHCODE, DBA.CADPostingDate, DBA.CADChartOfAccount, CA.COAACCOUNTDESCRIPTION "
+   
     scRow = GetSuccessRow()
     cnt = GetCountRecord(strSql)
     
@@ -95,12 +95,12 @@ def main():
         
     RowCount = IntStartRows -1
     
-    prog = IntStartRows / cnt
+
     
     print("Rows Start: " + str(scRow))
     print("Record Count: " + str(cnt))
     
-    bar = IncrementalBar(' Progress', index = RowCount, max = (cnt - RowCount))
+    bar = IncrementalBar(' Progress', index = 1, max = cnt)
     
     strSql +="Rows " + str(IntStartRows) + " to " + str(IntEndRows)
  
