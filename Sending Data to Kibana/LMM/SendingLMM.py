@@ -122,7 +122,7 @@ def main():
     strSql +="When Substring(LFBLoanAccountNo from 3 for 3) In (00012, 00020, 00030, 00027, 00013, 00019, 00016, 00023) Then 'Business Center V' "
     strSql +="End as Cluster "
     strSql +="From LMMFORWARDINGBALANCE "
-    strSql +="Where LFBDateForwarded Between '12/01/19' And '12/10/19' "
+    strSql +="Where LFBDateForwarded Between '12/01/19' And '12/06/19' "
     strSql +="Group By Substring(LFBLoanAccountNo from 3 for 3), Substring(LFBLOANACCOUNTNO from 6 for 3) , LFBLOANSTATUS, LFBDateForwarded "
     
     scRow = GetSuccessRow()

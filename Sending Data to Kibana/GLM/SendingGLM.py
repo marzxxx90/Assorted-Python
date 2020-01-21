@@ -31,6 +31,9 @@ def GetCountRecord(strSql):
     cur = con.cursor()    
     
     cur.execute("Select Count(*) From (" + strSql + " )")
+    
+    print("Select Count(*) From (" + strSql + " )")
+    
     for row in cur:
         tmpCount = row[0]
     return int(tmpCount)
@@ -77,8 +80,8 @@ def main():
     strSql +="DBA.CADChartOfAccount, Sum(DBA.CADBeginningBalance) as BeginningBalance, "
     strSql +="Sum(DBA.CADEndingBalance) as EndingBalance, CA.COAACCOUNTDESCRIPTION "
     strSql +="From GLMCOADAILYBALANCE DBA "
-    strSql +="Inner Join GLMChartOfAccount CA On DBA.CADChartOfAccount = CA.COAACCOUNTCODE "
-    strSql +="Where DBA.CADPostingDate Between '12/01/19' And '12/06/19' "
+    strSql +="Inner Join GLMChartOfAccount CA On DBA.CADChartOfAccount = CA.COAACCOUNTCODE And DBA.CADBOOKCODE = CA.COABOOKCODE "
+    strSql +="Where DBA.CADPostingDate = '12/01/19' "
     strSql +="Group by DBA.CADBRANCHCODE, DBA.CADPostingDate, DBA.CADChartOfAccount, CA.COAACCOUNTDESCRIPTION "
    
     scRow = GetSuccessRow()
@@ -100,7 +103,7 @@ def main():
     print("Rows Start: " + str(scRow))
     print("Record Count: " + str(cnt))
     
-    bar = IncrementalBar(' Progress', index = 1, max = cnt)
+    bar = IncrementalBar(' Progress', index = RowCount, max = cnt)
     
     strSql +="Rows " + str(IntStartRows) + " to " + str(IntEndRows)
  

@@ -85,7 +85,7 @@ DBA.CADChartOfAccount, Sum(DBA.CADBeginningBalance) as BeginningBalance,
 Sum(DBA.CADEndingBalance) as EndingBalance, CA.COAACCOUNTDESCRIPTION
 From GLMCOADAILYBALANCE DBA
 Inner Join GLMChartOfAccount CA On DBA.CADChartOfAccount = CA.COAACCOUNTCODE
-Where DBA.CADPostingDate Between '12/01/19' And '12/31/19'
+Where DBA.CADPostingDate Between '12/01/19' And '12/31/19' And CA.COABOOKCODE = '02'
 Group by DBA.CADBRANCHCODE, DBA.CADPostingDate, DBA.CADChartOfAccount, CA.COAACCOUNTDESCRIPTION
 
 
