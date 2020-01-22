@@ -15,7 +15,7 @@ FBTEST_PASSWORD = 'masterkey'
 DIRPATH = os.getcwd()
 
 # con = fdb.connect(dsn='D:\Installer\Database\DMMHost.fdb',user=FBTEST_USER, password=FBTEST_PASSWORD)
-con = fdb.connect(dsn='D:\Installer\Database\DMMHost.fdb',user ='sysdba', password='masterkey')
+con = fdb.connect(dsn=r"C:\Users\HQMIS05\Desktop\DesktopDat\DMMHost.fdb",user ='sysdba', password='masterkey')
   
 def SaveSuccessRow(strValue):
     f = open("DMMTDSuccessRow.txt","w+")
@@ -89,7 +89,7 @@ def main():
     strSql +="When Substring(TDFACCOUNTNUMBER from 3 for 3) In (00012, 00020, 00030, 00027, 00013, 00019, 00016, 00023) Then 'Business Center V' "
     strSql +="End as Cluster "
     strSql +="From DMMTDFORWARDEDBALANCE "
-    strSql +="Where TDFDATEFORWARDED Between '12/01/19' And '12/31/19' "
+    strSql +="Where TDFDATEFORWARDED >= '12/01/19' "
     strSql +="Group by Substring(TDFACCOUNTNUMBER from 3 for 3), Substring(TDFACCOUNTNUMBER from 6 for 3), TDFDATEFORWARDED "
     
     scRow = GetSuccessRow()
@@ -111,10 +111,9 @@ def main():
     print("Rows Start: " + str(scRow))
     print("Record Count: " + str(cnt))
     
-    bar = IncrementalBar(' Progress', index = RowCount, max = (cnt - RowCount))
+    bar = IncrementalBar(' Progress', index = RowCount, max = cnt)
     
     strSql +="Rows " + str(IntStartRows) + " to " + str(IntEndRows)
-
     cur.execute(strSql)
 	# Retrieve all rows as a sequence and print that sequence:
     RowCount = IntStartRows - 1
@@ -132,6 +131,10 @@ def main():
         # time.sleep(1)
         res = es.index(index="frontier-" + datetime.today().strftime('%Y%m%d'), doc_type='cbs', body=doc)
         #print(res['result'])
+        if res['result'] != "created":
+            time.sleep(3)
+            res = es.index(index="frontier-" + datetime.today().strftime('%Y%m%d'), doc_type='cbs', body=doc, request_timeout=30)
+
         bar.next()
         SaveSuccessRow(str(RowCount))
 

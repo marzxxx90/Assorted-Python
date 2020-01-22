@@ -82,10 +82,18 @@ When 00030 Then 'Cebu'
 When 00031 Then 'RD Plaza'
 When 00032 Then 'Surallah' End as Branch,
 DBA.CADChartOfAccount, Sum(DBA.CADBeginningBalance) as BeginningBalance, 
-Sum(DBA.CADEndingBalance) as EndingBalance, CA.COAACCOUNTDESCRIPTION
+Sum(DBA.CADENDINGBALANCE) as EndingBalance, CA.COAACCOUNTDESCRIPTION,
+Case 
+When DBA.CADBRANCHCODE In (00004, 00031, 00015, 00007, 00002) Then 'Business Center I' 
+When DBA.CADBRANCHCODE In (00001, 00005, 00003, 00008, 00032, 00006) Then 'Business Center II' 
+When DBA.CADBRANCHCODE In (00011, 00010, 00009, 00022, 00026, 00014) Then 'Business Center III' 
+When DBA.CADBRANCHCODE In (00017, 00025, 00028, 00029, 00021, 00018, 00024) Then 'Business Center IV' 
+When DBA.CADBRANCHCODE In (00012, 00020, 00030, 00027, 00013, 00019, 00016, 00023) Then 'Business Center V' 
+End as Cluster 
 From GLMCOADAILYBALANCE DBA
-Inner Join GLMChartOfAccount CA On DBA.CADChartOfAccount = CA.COAACCOUNTCODE
-Where DBA.CADPostingDate Between '12/01/19' And '12/31/19' And CA.COABOOKCODE = '02'
+Inner Join GLMChartOfAccount CA On DBA.CADChartOfAccount = CA.COAACCOUNTCODE 
+And DBA.CADBOOKCODE = CA.COABOOKCODE
+Where DBA.CADPostingDate = '12/01/19' And DBA.CADENDINGBALANCE <> 0
 Group by DBA.CADBRANCHCODE, DBA.CADPostingDate, DBA.CADChartOfAccount, CA.COAACCOUNTDESCRIPTION
 
 

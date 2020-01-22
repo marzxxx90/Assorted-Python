@@ -15,7 +15,7 @@ FBTEST_PASSWORD = 'masterkey'
 DIRPATH = os.getcwd()
 
 # con = fdb.connect(dsn='D:\Installer\Database\DMMHost.fdb',user=FBTEST_USER, password=FBTEST_PASSWORD)
-con = fdb.connect(dsn='D:\Installer\Database\GLMHost.fdb',user ='sysdba', password='masterkey')
+con = fdb.connect(dsn=r"C:\Users\HQMIS05\Desktop\DesktopDat\GLMHost.fdb",user ='sysdba', password='masterkey')
  
 def SaveSuccessRow(strValue):
     f = open("GLMSuccessRow.txt","w+")
@@ -31,8 +31,6 @@ def GetCountRecord(strSql):
     cur = con.cursor()    
     
     cur.execute("Select Count(*) From (" + strSql + " )")
-    
-    print("Select Count(*) From (" + strSql + " )")
     
     for row in cur:
         tmpCount = row[0]
@@ -78,10 +76,17 @@ def main():
     strSql +="When 00031 Then 'RD Plaza' "
     strSql +="When 00032 Then 'Surallah' End as Branch, "
     strSql +="DBA.CADChartOfAccount, Sum(DBA.CADBeginningBalance) as BeginningBalance, "
-    strSql +="Sum(DBA.CADEndingBalance) as EndingBalance, CA.COAACCOUNTDESCRIPTION "
+    strSql +="Sum(DBA.CADEndingBalance) as EndingBalance, CA.COAACCOUNTDESCRIPTION, "
+    strSql +="Case "
+    strSql +="When DBA.CADBRANCHCODE In (00004, 00031, 00015, 00007, 00002) Then 'Business Center I' "
+    strSql +="When DBA.CADBRANCHCODE In (00001, 00005, 00003, 00008, 00032, 00006) Then 'Business Center II' "
+    strSql +="When DBA.CADBRANCHCODE In (00011, 00010, 00009, 00022, 00026, 00014) Then 'Business Center III' "
+    strSql +="When DBA.CADBRANCHCODE In (00017, 00025, 00028, 00029, 00021, 00018, 00024) Then 'Business Center IV' "
+    strSql +="When DBA.CADBRANCHCODE In (00012, 00020, 00030, 00027, 00013, 00019, 00016, 00023) Then 'Business Center V' "
+    strSql +="End as Cluster "
     strSql +="From GLMCOADAILYBALANCE DBA "
     strSql +="Inner Join GLMChartOfAccount CA On DBA.CADChartOfAccount = CA.COAACCOUNTCODE And DBA.CADBOOKCODE = CA.COABOOKCODE "
-    strSql +="Where DBA.CADPostingDate = '12/01/19' "
+    strSql +="Where DBA.CADPostingDate = '12/01/19' And DBA.CADENDINGBALANCE <> 0 "
     strSql +="Group by DBA.CADBRANCHCODE, DBA.CADPostingDate, DBA.CADChartOfAccount, CA.COAACCOUNTDESCRIPTION "
    
     scRow = GetSuccessRow()
@@ -110,6 +115,7 @@ def main():
     cur.execute(strSql)
     # Retrieve all rows as a sequence and print that sequence:
     RowCount = 0
+    
     for row in cur:
         doc = {
             'PostingDate': row[0],
@@ -118,12 +124,17 @@ def main():
             'BeginningBalance': row[3],
             'EndingBalance': row[4],
             'AcountDescription': row[5],
+            'BusinessCenter': row[6],
             'DocType': "GLM"}
             
         RowCount += 1
         # time.sleep(1)
-        res = es.index(index="frontier-" + datetime.today().strftime('%Y%m%d'), doc_type='cbs', body=doc)
+        res = es.index(index="frontier-" + datetime.today().strftime('%Y%m%d'), doc_type='cbs', body=doc, request_timeout=30)
         #print(res['result'])
+        if res['result'] != "created":
+            time.sleep(3)
+            res = es.index(index="frontier-" + datetime.today().strftime('%Y%m%d'), doc_type='cbs', body=doc, request_timeout=30)
+            
         bar.next()
         SaveSuccessRow(str(RowCount))
         
